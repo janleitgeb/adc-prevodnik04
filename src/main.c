@@ -33,7 +33,7 @@ void init(void)
 int main(void)
 {
     uint32_t time = 0;
-    uint16_t vref, vtemp;
+    uint16_t vref, vtemp, temp;
 
     init();
 
@@ -41,9 +41,17 @@ int main(void)
         if (milis() - time > 1111 ) {
             time = milis();
             
-            vref = ADC_get(CHANNEL_VREF) * 5000L / 1023;
-            vtemp = (uint32_t)ADC_get(CHANNEL_VTEMP) * 5000L /1023;
-            printf("%u mV, %u mV\n", vref, vtemp);
+            vref = ((long)ADC_get(CHANNEL_VREF) * 5000 + 512) / 1023;
+            ADC_get(CHANNEL_VTEMP);
+            ADC_get(CHANNEL_VTEMP);
+            ADC_get(CHANNEL_VTEMP);
+            ADC_get(CHANNEL_VTEMP);
+            ADC_get(CHANNEL_VTEMP);
+            ADC_get(CHANNEL_VTEMP);
+            vtemp = ((uint32_t)ADC_get(CHANNEL_VTEMP) * 5000L + 512) /1023;
+            vtemp = vtemp * 2495L / vref;
+            temp = (100L*vtemp - 40000L + 195/2) / 195 ;
+            printf("%u mV, %u mV %u,%u ˚C\n", vref, vtemp, temp/10, temp%10);
         }
     }
 }
